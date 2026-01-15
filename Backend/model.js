@@ -1,4 +1,5 @@
-//Write missing code here
+const mongoose = require("mongoose");
+
 const schema = mongoose.Schema({
   EmpName: String,
   designation: String,
@@ -6,3 +7,5 @@ const schema = mongoose.Schema({
   img_url: String,
 });
 
+const BlogModel = mongoose.model("employee", schema);
+module.exports = BlogModel;
