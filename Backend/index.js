@@ -3,23 +3,42 @@ const cors = require("cors");
 
 const app = express();
 var PORT = 3001;
+
 app.use(express.json());
 app.use(cors());
 require("./connection");
-//Write missing code here
 
+const BlogModel = require("./model");
+
+// ADD
 app.post("/add", async (req, res) => {
-  try {
-    console.log(req.body);
-    const result = await BlogModel(req.body).save();
-    res.send({ message: "Employee added" });
-  } catch (error) {
-    console.log(error);
-  }
+  await BlogModel(req.body).save();
+  res.json({ message: "Employee Added" });
 });
 
-// Write GET API Code
+// VIEW
+app.get("/view", async (req, res) => {
+  const data = await BlogModel.find();
+  res.json(data);
+});
 
+// GET ONE (for update)
+app.get("/get/:id", async (req, res) => {
+  const data = await BlogModel.findById(req.params.id);
+  res.json(data);
+});
+
+// UPDATE
+app.put("/update/:id", async (req, res) => {
+  await BlogModel.findByIdAndUpdate(req.params.id, req.body);
+  res.send("Updated");
+});
+
+// DELETE
+app.delete("/delete/:id", async (req, res) => {
+  await BlogModel.findByIdAndDelete(req.params.id);
+  res.send("Deleted");
+});
 
 app.listen(PORT, () => {
   console.log(`${PORT} is up and running`);
