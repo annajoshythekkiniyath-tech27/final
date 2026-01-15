@@ -1,9 +1,7 @@
 const mongoose = require("mongoose");
-//Write missing code 
+
 mongoose
-  .connect(
-   
-  )
+  .connect("mongodb+srv://annajoshythekkiniyath_db_user:f9vtRq7sC8LWp8N4@newproject.xz04cyr.mongodb.net/?appName=newproject")
   .then(() => {
     console.log("Connected to DB");
   })
