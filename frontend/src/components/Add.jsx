@@ -1,84 +1,58 @@
 import { Box, Button, TextField } from "@mui/material";
-import  { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Add = () => {
   const navigate = useNavigate();
-  var [inputs, setInputs] = useState({
+  const { id } = useParams();
+
+  const [inputs, setInputs] = useState({
     EmpName: "",
     designation: "",
-    empId:"",
-    img_url: ""
+    empId: "",
+    img_url: "",
   });
-  const inputHandler = (e) => {
-    console.log(e.target.value);
-    setInputs({ ...inputs, [e.target.name]: e.target.value });
-    console.log("in",inputs);
-  };
-  const addData = () => {
-    //Write missing code here
-  };
-  return (
-    <div>
-      <div>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "90vh",
-          }}
-        >
-          <Box
-            component="form"
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-              width: "600px",
-            }}
-          >
-            <TextField
-              variant="outlined"
-              placeholder="Employee Name"
-              onChange={inputHandler}
-              name="EmpName"
-              value={inputs.title}
-              fullWidth
-            />
-            <TextField
-              variant="outlined"
-              placeholder="Designation"
-              onChange={inputHandler}
-              name="designation"
-              value={inputs.designation}
-              multiline={4}
-            />
-             <TextField
-              variant="outlined"
-              placeholder="Employee Id"
-              onChange={inputHandler}
-              name="empId"
-              value={inputs.empId}
-            />
-            <TextField
-              variant="outlined"
-              placeholder="Photo(paste any link from the browser)"
-              onChange={inputHandler}
-              name="img_url"
-              value={inputs.img_url}
-            />
-           
 
-            <Button variant="contained" color="secondary" onClick={addData}>
-              Submit
-            </Button>
-          </Box>
-        </Box>
-      </div>
-    </div>
+  // Load old data if UPDATE
+  useEffect(() => {
+    if (id) {
+      axios.get("http://localhost:3001/get/" + id).then((res) => {
+        setInputs(res.data);
+      });
+    }
+  }, []);
+
+  const inputHandler = (e) => {
+    setInputs({ ...inputs, [e.target.name]: e.target.value });
+  };
+
+  const saveData = () => {
+    if (id) {
+      axios.put("http://localhost:3001/update/" + id, inputs).then(() => {
+        alert("Employee Updated");
+        navigate("/");
+      });
+    } else {
+      axios.post("http://localhost:3001/add", inputs).then(() => {
+        alert("Employee Added");
+        navigate("/");
+      });
+    }
+  };
+
+  return (
+    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "90vh" }}>
+      <Box sx={{ display: "flex", flexDirection: "column", width: "450px", gap: 2 }}>
+        <TextField name="EmpName" value={inputs.EmpName} onChange={inputHandler} placeholder="Employee Name" />
+        <TextField name="designation" value={inputs.designation} onChange={inputHandler} placeholder="Designation" />
+        <TextField name="empId" value={inputs.empId} onChange={inputHandler} placeholder="Employee Id" />
+        <TextField name="img_url" value={inputs.img_url} onChange={inputHandler} placeholder="Photo URL" />
+        <Button sx={{ backgroundColor: "#9c27b0" }} variant="contained" onClick={saveData}>
+          {id ? "UPDATE" : "ADD"}
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
