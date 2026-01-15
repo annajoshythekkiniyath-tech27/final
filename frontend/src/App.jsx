@@ -1,7 +1,7 @@
-
 import Home from "./components/Home";
-import { Route, Routes } from "react-router-dom";
-//Write missing code here
+import Add from "./components/Add";
+import Navbar from "./components/Navbar";
+import { Routes, Route } from "react-router-dom";
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/add" element={<Add />} />
-
+        <Route path="/add/:id" element={<Add />} />   {/* for UPDATE */}
       </Routes>
     </>
   );
