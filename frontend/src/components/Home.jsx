@@ -1,60 +1,47 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Grid,
-  Typography,
-} from "@mui/material";
-import "../App.css";
+import { Card, CardContent, CardActions, Button, Grid, Typography } from "@mui/material";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [data, setData] = useState([]);
+  const navigate = useNavigate();
+
+  const fetchData = () => {
+    axios.get("http://localhost:3001/view").then((res) => setData(res.data));
+  };
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/get")
-      .then((res) => {
-        console.log(res);
-        setData(res.data);
-      })
-      .catch((err) => console.log(err));
+    fetchData();
   }, []);
 
+  const deleteData = (id) => {
+    axios.delete("http://localhost:3001/delete/" + id).then(fetchData);
+  };
+
   return (
-    <div className="Mar">
-      <Grid container spacing={6}>
-        {data.map((val, i) => (
-          <Grid item xs={12} sm={6} md={4} key={i}>
-            <Card sx={{ display: "flex", flexDirection: "column" }}>
-              <CardContent>
-                <img
-                  src={val.img_url}
-                  className="img-fluid rounded-start"
-                  width="100%"
-                  alt="image"
-                />
-                <Typography gutterBottom variant="h5">
-                  {val.EmpName}
-                </Typography>
-                <Typography component="div">{val.designation}</Typography>
-                <Typography component="div">{val.empId}</Typography>
-              </CardContent>
-              <CardActions sx={{ justifyContent: "center" }}>
-                <Button size="small" variant="contained" color="secondary">
-                  Delete
-                </Button>
-                <Button size="small" variant="contained" color="secondary">
-                  Update
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </div>
+    <Grid container spacing={4} sx={{ padding: 5 }}>
+      {data.map((val) => (
+        <Grid item md={4} key={val._id}>
+          <Card sx={{ padding: 2 }}>
+            <CardContent>
+              <img src={val.img_url} width="100%" />
+              <Typography variant="h6">{val.EmpName}</Typography>
+              <Typography>{val.designation}</Typography>
+              <Typography>{val.empId}</Typography>
+            </CardContent>
+            <CardActions sx={{ justifyContent: "center", gap: 2 }}>
+              <Button sx={{ backgroundColor: "#9c27b0" }} variant="contained" onClick={() => deleteData(val._id)}>
+                DELETE
+              </Button>
+              <Button sx={{ backgroundColor: "#9c27b0" }} variant="contained" onClick={() => navigate("/add/" + val._id)}>
+                UPDATE
+              </Button>
+            </CardActions>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
   );
 };
 
